@@ -1,0 +1,58 @@
+Here is the pseudocode for both the producers and consumers of question 2:
+
+Producer:
+
+line | 
+1    | while (true) {
+2    |     item = generate_item()
+3    |     mutex.lock()
+4    |     fifo_queue.push(item)
+5    |     mutex.unlock()
+6    |     condition.signal()
+7    | }
+
+Consumers:
+
+line | 
+a    | while(true) {
+b    |     mutex.lock()
+c    |     if (fifo_queue.empty()) {
+d    |         condition.wait(mutex)
+e    |     }
+f    |     item = fifo_queue.remove()
+g    |     mutex.unlock()
+h    |     process_item(item)
+i    | }
+
+As mentioned, there is one producer and multiple consumers.  The following set up leads to
+a race condition exposed by the following scenario:
+
+Let's say we have 2 consumers and one producer:
+
+Consumer A starts first, and runs from line a to line d, essentially noticing that the
+queue is empty and waits on the condition.
+
+Context Switch #1
+
+Producer P starts and runs from line 1 to to line 5, generating an item, adding it to the
+queue and unlocking the mutex but not yet signaling the condition
+
+Context Switch #2
+
+Consumer B runs from line a to line h, locking the mutex, popping the queue, unlocking the
+mutex and beginning to process the item
+
+Context Switch #3
+
+Producer P runs line 6, and signals the condition
+
+Context Switch #4
+
+Consumer A receives the signal, and remove the first item from the queue.  However, because
+there is no item on the queue, the program crashes
+
+This race condition can be solved by changing line c from:
+
+if (fifo_queue.empty()) to while (fifo_queue.empty())
+
+This will repeat the check for consumer A and prevent potentially popping an empty queue.
