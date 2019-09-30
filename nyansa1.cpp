@@ -49,16 +49,16 @@ struct Date {
  *
  * Time complexity:
  *     Insert is O(N log D) as the input into a map is log D the size D << N, ~O(log N).
- *     Because the storage of URLs in an unordered_map, insertion and verification is O(1)
- *     Iteration through the map is less than O(N), as the entries can only be reduced in size
- *     as the maximum case is that each unique date and url pairing appears only once in the
- *     original file.
+ *     Because the storage of URLs in an unordered_map, insertion and search is O(1) on average
+ *     case.  Iteration through the map is less than O(N), as the entries can only be reduced
+ *     in size as the maximum case is that each unique date and url pairing appears only once
+ *     in the original file.
  *     
  *
  * Storage complexity:
  *     The storage complexity is basically O(D * U), because each date could possibly store
- *     one entry per each URL.  The hope is that this fits in main memory, as U in general
- *     could be specified more main memory, and D is fairly small.
+ *     one entry per each URL.  The hope is that this fits in main memory, as U was specified
+ *     as fitting in main memory, and D is fairly small.
  */
 int main(int ac, char **av) {
     // Not sure what desired error behavior is
